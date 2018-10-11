@@ -17,13 +17,13 @@ void calculate_arrays_no_GPU( int n, float *A, float *B, float *C, float *D, flo
 }
 
 int main(void){
-  struct timespec inicio;
-  struct timespec fin;
-  int N = 1<<20;  //  1 048 574 elementos
+  struct timespec start;
+  struct timespec stop;
+  int N = 1<<20;  //  1 048 574 elements
 
   float *A, *B, *C, *D, *E, *F, *G, *H, *K;
 
-  //  Reserva de memoria
+  //  Allocate memory
 
   A = (float *)malloc( N*sizeof(float) );
   B = (float *)malloc( N*sizeof(float) );
@@ -47,27 +47,27 @@ int main(void){
     K[i] = 1e6 * ( rand()/RAND_MAX );
   }
 
-  clock_gettime( CLOCK_REALTIME, &inicio ); //  Inicio del temporizador
+  clock_gettime( CLOCK_REALTIME, &start ); //  Start timer
 
   calculate_arrays_no_GPU( N, A, B, C, D, E, F, G, H, K );
 
-  clock_gettime(CLOCK_REALTIME, &fin);  //  Parada del temporizador
-  double tiempo_transcurrido_s = (fin.tv_sec - inicio.tv_sec)+ (fin.tv_nsec - inicio.tv_nsec)/1e9;  //  Calculo del tiempo transcurrido [s]
+  clock_gettime(CLOCK_REALTIME, &stop);  //  Stop timer
+  double elapsed_time_s = (stop.tv_sec - start.tv_sec)+ (stop.tv_nsec - start.tv_nsec)/1e9;  //  Calculate elapsed time [s]
 
-  //  Comprueba los primeros 10 elementos de los tres vectores resultado
+  //  Test 10 first elements
   for(int i = 0; i < 10; i++){
     bool test1 = ( C[i] == A[i] + B[i] );
     bool test2 = ( F[i] == D[i] - E[i] );
     bool test3 = ( G[i] == K[i] * H[i] );
 
-    printf( "\nC[%i] = A[%i] + B[%i] :%s\n", i, i, i, test1 ? "correcto" : "erroneo");
-    printf( "F[%i] = D[%i] - E[%i] :%s\n", i, i, i, test2 ? "correcto" : "erroneo");
-    printf( "G[%i] = K[%i] * H[%i] :%s\n", i, i, i, test3 ? "correcto" : "erroneo");
+    printf( "\nC[%i] = A[%i] + B[%i] :%s\n", i, i, i, test1 ? "correct" : "failed");
+    printf( "F[%i] = D[%i] - E[%i] :%s\n", i, i, i, test2 ? "correct" : "failed");
+    printf( "G[%i] = K[%i] * H[%i] :%s\n", i, i, i, test3 ? "correct" : "failed");
 
   }
 
 
-  printf("\nTiempo transcurrido (ejecucion OperarVectores) : %f ms\n", tiempo_transcurrido_s*1e3);
+  printf("\nElapsed time (calculate_arrays_no_GPUs) : %f ms\n", elapsed_time_s*1e3);
 
   // Liberacion de memoria
   free(A);
